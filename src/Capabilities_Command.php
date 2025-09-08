@@ -1,27 +1,27 @@
 <?php
 
-use WP_CLI\Formatter;
+use FP_CLI\Formatter;
 
 /**
  * Adds, removes, and lists capabilities of a user role.
  *
- * See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
+ * See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
  *
  * ## EXAMPLES
  *
  *     # Add 'spectate' capability to 'author' role.
- *     $ wp cap add 'author' 'spectate'
+ *     $ fp cap add 'author' 'spectate'
  *     Success: Added 1 capability to 'author' role.
  *
  *     # Add all caps from 'editor' role to 'author' role.
- *     $ wp cap list 'editor' | xargs wp cap add 'author'
+ *     $ fp cap list 'editor' | xargs fp cap add 'author'
  *     Success: Added 24 capabilities to 'author' role.
  *
  *     # Remove all caps from 'editor' role that also appear in 'author' role.
- *     $ wp cap list 'author' | xargs wp cap remove 'editor'
+ *     $ fp cap list 'author' | xargs fp cap remove 'editor'
  *     Success: Removed 34 capabilities from 'editor' role.
  */
-class Capabilities_Command extends WP_CLI_Command {
+class Capabilities_Command extends FP_CLI_Command {
 
 	/**
 	 * List of available fields.
@@ -60,7 +60,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Display alphabetical list of Contributor capabilities.
-	 *     $ wp cap list 'contributor' | sort
+	 *     $ fp cap list 'contributor' | sort
 	 *     delete_posts
 	 *     edit_posts
 	 *     level_0
@@ -94,9 +94,9 @@ class Capabilities_Command extends WP_CLI_Command {
 		if ( 'list' === $assoc_args['format'] ) {
 			foreach ( $output_caps as $cap ) {
 				if ( $show_grant ) {
-					WP_CLI::line( implode( ',', array( $cap->name, $cap->grant ) ) );
+					FP_CLI::line( implode( ',', array( $cap->name, $cap->grant ) ) );
 				} else {
-					WP_CLI::line( $cap->name );
+					FP_CLI::line( $cap->name );
 				}
 			}
 		} else {
@@ -128,7 +128,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Add 'spectate' capability to 'author' role.
-	 *     $ wp cap add author spectate
+	 *     $ fp cap add author spectate
 	 *     Success: Added 1 capability to 'author' role.
 	 */
 	public function add( $args, $assoc_args ) {
@@ -159,10 +159,10 @@ class Capabilities_Command extends WP_CLI_Command {
 			++$count;
 		}
 
-		$capability          = WP_CLI\Utils\pluralize( 'capability', $count );
+		$capability          = FP_CLI\Utils\pluralize( 'capability', $count );
 		$grant_qualification = $grant ? '' : ' as false';
 
-		WP_CLI::success( "Added {$count} {$capability} to '{$role}' role{$grant_qualification}." );
+		FP_CLI::success( "Added {$count} {$capability} to '{$role}' role{$grant_qualification}." );
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Remove 'spectate' capability from 'author' role.
-	 *     $ wp cap remove author spectate
+	 *     $ fp cap remove author spectate
 	 *     Success: Removed 1 capability from 'author' role.
 	 */
 	public function remove( $args ) {
@@ -201,25 +201,25 @@ class Capabilities_Command extends WP_CLI_Command {
 			++$count;
 		}
 
-		$capability = WP_CLI\Utils\pluralize( 'capability', $count );
+		$capability = FP_CLI\Utils\pluralize( 'capability', $count );
 
-		WP_CLI::success( "Removed {$count} {$capability} from '{$role}' role." );
+		FP_CLI::success( "Removed {$count} {$capability} from '{$role}' role." );
 	}
 
 	/**
 	 * Retrieve a specific role from the system.
 	 *
 	 * @param string $role Role to retrieve.
-	 * @return WP_Role Requested role.
-	 * @throws \WP_CLI\ExitException If the role could not be found.
+	 * @return FP_Role Requested role.
+	 * @throws \FP_CLI\ExitException If the role could not be found.
 	 */
 	private static function get_role( $role ) {
-		global $wp_roles;
+		global $fp_roles;
 
-		$role_obj = $wp_roles->get_role( $role );
+		$role_obj = $fp_roles->get_role( $role );
 
 		if ( ! $role_obj ) {
-			WP_CLI::error( "'{$role}' role not found." );
+			FP_CLI::error( "'{$role}' role not found." );
 		}
 
 		return $role_obj;
@@ -228,14 +228,14 @@ class Capabilities_Command extends WP_CLI_Command {
 	/**
 	 * Assert that the roles are persisted to the database.
 	 *
-	 * @throws \WP_CLI\ExitException If the roles are not persisted to the
+	 * @throws \FP_CLI\ExitException If the roles are not persisted to the
 	 *                               database.
 	 */
 	private static function persistence_check() {
-		global $wp_roles;
+		global $fp_roles;
 
-		if ( ! $wp_roles->use_db ) {
-			WP_CLI::error( 'Role definitions are not persistent.' );
+		if ( ! $fp_roles->use_db ) {
+			FP_CLI::error( 'Role definitions are not persistent.' );
 		}
 	}
 }
