@@ -1,22 +1,22 @@
-Feature: Manage FinPress roles
+Feature: Manage WordPress roles
 
   Background:
-    Given a FP install
+    Given a WP install
 
   Scenario: Role CRUD operations
-    When I run `fp role list`
+    When I run `wp role list`
     Then STDOUT should be a table containing rows:
       | name       | role       |
       | Subscriber | subscriber |
       | Editor     | editor     |
 
-    When I run `fp role create reporter Reporter`
+    When I run `wp role create reporter Reporter`
     Then STDOUT should be:
       """
       Success: Role with key 'reporter' created.
       """
 
-    When I run `fp role list --field=role`
+    When I run `wp role list --field=role`
     Then STDOUT should be:
       """
       administrator
@@ -28,22 +28,22 @@ Feature: Manage FinPress roles
       """
 
   Scenario: Resetting a role
-    When I run `fp role reset author`
+    When I run `wp role reset author`
     Then STDOUT should be:
       """
       No changes necessary for 'author' role.
       Success: Role didn't need resetting.
       """
 
-    When I run `fp cap remove author read`
-    And I run `fp role reset author`
+    When I run `wp cap remove author read`
+    And I run `wp role reset author`
     Then STDOUT should be:
       """
       Restored 1 capability to and removed 0 capabilities from 'author' role.
       Success: Role reset.
       """
 
-    When I run `fp role reset author editor`
+    When I run `wp role reset author editor`
     Then STDOUT should be:
       """
       No changes necessary for 'author' role.
@@ -51,8 +51,8 @@ Feature: Manage FinPress roles
       Success: No roles needed resetting.
       """
 
-    When I run `fp cap remove author read`
-    And I run `fp role reset author editor`
+    When I run `wp cap remove author read`
+    And I run `wp role reset author editor`
     Then STDOUT should be:
       """
       Restored 1 capability to and removed 0 capabilities from 'author' role.
@@ -60,7 +60,7 @@ Feature: Manage FinPress roles
       Success: 1 of 2 roles reset.
       """
 
-    When I run `fp role reset --all`
+    When I run `wp role reset --all`
     Then STDOUT should be:
       """
       No changes necessary for 'administrator' role.
@@ -71,8 +71,8 @@ Feature: Manage FinPress roles
       Success: No roles needed resetting.
       """
 
-    When I run `fp role create custom-role "Custom role" --clone=author`
-    And I run `fp role reset --all`
+    When I run `wp role create custom-role "Custom role" --clone=author`
+    And I run `wp role reset --all`
     Then STDOUT should be:
       """
       Custom role 'custom-role' not affected.
@@ -84,7 +84,7 @@ Feature: Manage FinPress roles
       Success: No roles needed resetting.
       """
 
-    When I try `fp role reset custom-role`
+    When I try `wp role reset custom-role`
     Then STDERR should contain:
       """
       Error: Must specify a default role to reset.
@@ -94,7 +94,7 @@ Feature: Manage FinPress roles
       Custom role 'custom-role' not affected.
       """
 
-    When I run `fp role reset custom-role author`
+    When I run `wp role reset custom-role author`
     Then STDOUT should be:
       """
       Custom role 'custom-role' not affected.
@@ -102,8 +102,8 @@ Feature: Manage FinPress roles
       Success: Role didn't need resetting.
       """
 
-    When I run `fp cap remove author read`
-    And I run `fp role reset custom-role author`
+    When I run `wp cap remove author read`
+    And I run `wp role reset custom-role author`
     Then STDOUT should be:
       """
       Custom role 'custom-role' not affected.
@@ -112,21 +112,21 @@ Feature: Manage FinPress roles
       """
 
   Scenario: Resetting an already-deleted role
-    Given a FP install
+    Given a WP install
 
-    When I run `fp role delete editor`
+    When I run `wp role delete editor`
     Then STDOUT should be:
       """
       Success: Role with key 'editor' deleted.
       """
 
-    When I try `fp role exists editor`
+    When I try `wp role exists editor`
     Then STDERR should be:
       """
       Error: Role with ID 'editor' does not exist.
       """
 
-    When I run `fp role reset editor`
+    When I run `wp role reset editor`
     Then STDOUT should contain:
       """
       removed 0 capabilities from 'editor' role.
@@ -136,31 +136,31 @@ Feature: Manage FinPress roles
       Success: Role reset.
       """
 
-    When I run `fp role exists editor`
+    When I run `wp role exists editor`
     Then STDOUT should be:
       """
       Success: Role with ID 'editor' exists.
       """
 
   Scenario: Cloning a role
-    When I try `fp role create reporter Reporter --clone=no-role`
+    When I try `wp role create reporter Reporter --clone=no-role`
     Then STDERR should be:
       """
       Error: 'no-role' role not found.
       """
 
-    When I run `fp role create reporter Reporter --clone=author`
+    When I run `wp role create reporter Reporter --clone=author`
     Then STDOUT should be:
       """
       Success: Role with key 'reporter' created. Cloned capabilities from 'author'.
       """
 
-    When I run `fp role list`
+    When I run `wp role list`
     Then STDOUT should be a table containing rows:
       | name       | role       |
       | Reporter   | reporter   |
 
-    When I run `fp cap list reporter`
+    When I run `wp cap list reporter`
     Then STDOUT should be:
       """
       upload_files
@@ -175,7 +175,7 @@ Feature: Manage FinPress roles
       delete_published_posts
       """
 
-    When I run `fp cap list reporter --format=count`
+    When I run `wp cap list reporter --format=count`
     Then STDOUT should be:
       """
       10

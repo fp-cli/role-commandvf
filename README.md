@@ -1,9 +1,9 @@
-fp-cli/role-commandvf
+wp-cli/role-command
 ===================
 
 Adds, removes, lists, and resets roles and capabilities.
 
-[![Testing](https://github.com/fp-cli/role-commandvf/actions/workflows/testing.yml/badge.svg)](https://github.com/fp-cli/role-commandvf/actions/workflows/testing.yml)
+[![Testing](https://github.com/wp-cli/role-command/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/role-command/actions/workflows/testing.yml)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
@@ -11,20 +11,20 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 This package implements the following commands:
 
-### fp role
+### wp role
 
 Manages user roles, including creating new roles and resetting to defaults.
 
 ~~~
-fp role
+wp role
 ~~~
 
-See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
+See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
 
 **EXAMPLES**
 
     # List roles.
-    $ fp role list --fields=role --format=csv
+    $ wp role list --fields=role --format=csv
     role
     administrator
     editor
@@ -33,29 +33,29 @@ See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and
     subscriber
 
     # Check to see if a role exists.
-    $ fp role exists editor
+    $ wp role exists editor
     Success: Role with ID 'editor' exists.
 
     # Create a new role.
-    $ fp role create approver Approver
+    $ wp role create approver Approver
     Success: Role with key 'approver' created.
 
     # Delete an existing role.
-    $ fp role delete approver
+    $ wp role delete approver
     Success: Role with key 'approver' deleted.
 
     # Reset existing roles to their default capabilities.
-    $ fp role reset administrator author contributor
+    $ wp role reset administrator author contributor
     Success: Reset 3/3 roles.
 
 
 
-### fp role create
+### wp role create
 
 Creates a new role.
 
 ~~~
-fp role create <role-key> <role-name> [--clone=<role>]
+wp role create <role-key> <role-name> [--clone=<role>]
 ~~~
 
 **OPTIONS**
@@ -72,21 +72,21 @@ fp role create <role-key> <role-name> [--clone=<role>]
 **EXAMPLES**
 
     # Create role for Approver.
-    $ fp role create approver Approver
+    $ wp role create approver Approver
     Success: Role with key 'approver' created.
 
     # Create role for Product Administrator.
-    $ fp role create productadmin "Product Administrator"
+    $ wp role create productadmin "Product Administrator"
     Success: Role with key 'productadmin' created.
 
 
 
-### fp role delete
+### wp role delete
 
 Deletes an existing role.
 
 ~~~
-fp role delete <role-key>
+wp role delete <role-key>
 ~~~
 
 **OPTIONS**
@@ -97,21 +97,21 @@ fp role delete <role-key>
 **EXAMPLES**
 
     # Delete approver role.
-    $ fp role delete approver
+    $ wp role delete approver
     Success: Role with key 'approver' deleted.
 
     # Delete productadmin role.
-    $ fp role delete productadmin
+    $ wp role delete productadmin
     Success: Role with key 'productadmin' deleted.
 
 
 
-### fp role exists
+### wp role exists
 
 Checks if a role exists.
 
 ~~~
-fp role exists <role-key>
+wp role exists <role-key>
 ~~~
 
 Exits with return code 0 if the role exists, 1 if it does not.
@@ -124,17 +124,17 @@ Exits with return code 0 if the role exists, 1 if it does not.
 **EXAMPLES**
 
     # Check if a role exists.
-    $ fp role exists editor
+    $ wp role exists editor
     Success: Role with ID 'editor' exists.
 
 
 
-### fp role list
+### wp role list
 
 Lists all roles.
 
 ~~~
-fp role list [--fields=<fields>] [--field=<field>] [--format=<format>]
+wp role list [--fields=<fields>] [--field=<field>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -169,7 +169,7 @@ There are no optional fields.
 **EXAMPLES**
 
     # List roles.
-    $ fp role list --fields=role --format=csv
+    $ wp role list --fields=role --format=csv
     role
     administrator
     editor
@@ -179,17 +179,17 @@ There are no optional fields.
 
 
 
-### fp role reset
+### wp role reset
 
 Resets any default role to default capabilities.
 
 ~~~
-fp role reset [<role-key>...] [--all]
+wp role reset [<role-key>...] [--all]
 ~~~
 
-Uses FinPress' `populate_roles()` function to put one or more
+Uses WordPress' `populate_roles()` function to put one or more
 roles back into the state they were at in the a fresh
-FinPress install. Removes any capabilities that were added,
+WordPress install. Removes any capabilities that were added,
 and restores any capabilities that were removed. Custom roles
 are not affected.
 
@@ -204,55 +204,55 @@ are not affected.
 **EXAMPLES**
 
     # Reset three roles.
-    $ fp role reset administrator author contributor
+    $ wp role reset administrator author contributor
     Restored 1 capability to and removed 0 capabilities from 'administrator' role.
     No changes necessary for 'author' role.
     No changes necessary for 'contributor' role.
     Success: 1 of 3 roles reset.
 
     # Reset a custom role.
-    $ fp role reset custom_role
+    $ wp role reset custom_role
     Custom role 'custom_role' not affected.
     Error: Must specify a default role to reset.
 
     # Reset all default roles.
-    $ fp role reset --all
+    $ wp role reset --all
     Success: All default roles reset.
 
 
 
-### fp cap
+### wp cap
 
 Adds, removes, and lists capabilities of a user role.
 
 ~~~
-fp cap
+wp cap
 ~~~
 
-See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
+See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
 
 **EXAMPLES**
 
     # Add 'spectate' capability to 'author' role.
-    $ fp cap add 'author' 'spectate'
+    $ wp cap add 'author' 'spectate'
     Success: Added 1 capability to 'author' role.
 
     # Add all caps from 'editor' role to 'author' role.
-    $ fp cap list 'editor' | xargs fp cap add 'author'
+    $ wp cap list 'editor' | xargs wp cap add 'author'
     Success: Added 24 capabilities to 'author' role.
 
     # Remove all caps from 'editor' role that also appear in 'author' role.
-    $ fp cap list 'author' | xargs fp cap remove 'editor'
+    $ wp cap list 'author' | xargs wp cap remove 'editor'
     Success: Removed 34 capabilities from 'editor' role.
 
 
 
-### fp cap add
+### wp cap add
 
 Adds capabilities to a given role.
 
 ~~~
-fp cap add <role> <cap>... [--grant]
+wp cap add <role> <cap>... [--grant]
 ~~~
 
 **OPTIONS**
@@ -275,17 +275,17 @@ fp cap add <role> <cap>... [--grant]
 **EXAMPLES**
 
     # Add 'spectate' capability to 'author' role.
-    $ fp cap add author spectate
+    $ wp cap add author spectate
     Success: Added 1 capability to 'author' role.
 
 
 
-### fp cap list
+### wp cap list
 
 Lists capabilities for a given role.
 
 ~~~
-fp cap list <role> [--format=<format>] [--show-grant]
+wp cap list <role> [--format=<format>] [--show-grant]
 ~~~
 
 **OPTIONS**
@@ -315,7 +315,7 @@ fp cap list <role> [--format=<format>] [--show-grant]
 **EXAMPLES**
 
     # Display alphabetical list of Contributor capabilities.
-    $ fp cap list 'contributor' | sort
+    $ wp cap list 'contributor' | sort
     delete_posts
     edit_posts
     level_0
@@ -324,12 +324,12 @@ fp cap list <role> [--format=<format>] [--show-grant]
 
 
 
-### fp cap remove
+### wp cap remove
 
 Removes capabilities from a given role.
 
 ~~~
-fp cap remove <role> <cap>...
+wp cap remove <role> <cap>...
 ~~~
 
 **OPTIONS**
@@ -343,16 +343,16 @@ fp cap remove <role> <cap>...
 **EXAMPLES**
 
     # Remove 'spectate' capability from 'author' role.
-    $ fp cap remove author spectate
+    $ wp cap remove author spectate
     Success: Removed 1 capability from 'author' role.
 
 ## Installing
 
-This package is included with FP-CLI itself, no additional installation necessary.
+This package is included with WP-CLI itself, no additional installation necessary.
 
-To install the latest version of this package over what's included in FP-CLI, run:
+To install the latest version of this package over what's included in WP-CLI, run:
 
-    fp package install git@github.com:fp-cli/role-commandvf.git
+    wp package install git@github.com:wp-cli/role-command.git
 
 ## Contributing
 
@@ -360,25 +360,25 @@ We appreciate you taking the initiative to contribute to this project.
 
 Contributing isn’t limited to just code. We encourage you to contribute in the way that best fits your abilities, by writing tutorials, giving a demo at your local meetup, helping other users with their support questions, or revising our documentation.
 
-For a more thorough introduction, [check out FP-CLI's guide to contributing](https://make.finpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
+For a more thorough introduction, [check out WP-CLI's guide to contributing](https://make.wordpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
 
 ### Reporting a bug
 
 Think you’ve found a bug? We’d love for you to help us get it fixed.
 
-Before you create a new issue, you should [search existing issues](https://github.com/fp-cli/role-commandvf/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
+Before you create a new issue, you should [search existing issues](https://github.com/wp-cli/role-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fp-cli/role-commandvf/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
+Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/wp-cli/role-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.wordpress.org/cli/handbook/bug-reports/).
 
 ### Creating a pull request
 
-Want to contribute a new feature? Please first [open a new issue](https://github.com/fp-cli/role-commandvf/issues/new) to discuss whether the feature is a good fit for the project.
+Want to contribute a new feature? Please first [open a new issue](https://github.com/wp-cli/role-command/issues/new) to discuss whether the feature is a good fit for the project.
 
-Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.finpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.finpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
+Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.wordpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.wordpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
 
 ## Support
 
-GitHub issues aren't for general support questions, but there are other venues you can try: https://fp-cli.org/#support
+GitHub issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
 
 
-*This README.md is generated dynamically from the project's codebase using `fp scaffold package-readme` ([doc](https://github.com/fp-cli/scaffold-package-command#fp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
+*This README.md is generated dynamically from the project's codebase using `wp scaffold package-readme` ([doc](https://github.com/wp-cli/scaffold-package-command#wp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*

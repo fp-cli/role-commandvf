@@ -1,17 +1,17 @@
 <?php
 
-use FP_CLI\Utils;
-use FP_CLI\Formatter;
+use WP_CLI\Utils;
+use WP_CLI\Formatter;
 
 /**
  * Manages user roles, including creating new roles and resetting to defaults.
  *
- * See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
+ * See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
  *
  * ## EXAMPLES
  *
  *     # List roles.
- *     $ fp role list --fields=role --format=csv
+ *     $ wp role list --fields=role --format=csv
  *     role
  *     administrator
  *     editor
@@ -20,36 +20,36 @@ use FP_CLI\Formatter;
  *     subscriber
  *
  *     # Check to see if a role exists.
- *     $ fp role exists editor
+ *     $ wp role exists editor
  *     Success: Role with ID 'editor' exists.
  *
  *     # Create a new role.
- *     $ fp role create approver Approver
+ *     $ wp role create approver Approver
  *     Success: Role with key 'approver' created.
  *
  *     # Delete an existing role.
- *     $ fp role delete approver
+ *     $ wp role delete approver
  *     Success: Role with key 'approver' deleted.
  *
  *     # Reset existing roles to their default capabilities.
- *     $ fp role reset administrator author contributor
+ *     $ wp role reset administrator author contributor
  *     Success: Reset 3/3 roles.
  *
- * @package fp-cli
+ * @package wp-cli
  */
-class Role_Command extends FP_CLI_Command {
+class Role_Command extends WP_CLI_Command {
 
 	/**
 	 * List of available fields.
 	 *
-	 * @var array<string>
+	 * @var array
 	 */
 	private $fields = [ 'name', 'role' ];
 
 	/**
-	 * Default roles as provided by FinPress Core.
+	 * Default roles as provided by WordPress Core.
 	 *
-	 * @var array<string>
+	 * @var array
 	 */
 	private $roles = [ 'administrator', 'editor', 'author', 'contributor', 'subscriber' ];
 
@@ -88,7 +88,7 @@ class Role_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List roles.
-	 *     $ fp role list --fields=role --format=csv
+	 *     $ wp role list --fields=role --format=csv
 	 *     role
 	 *     administrator
 	 *     editor
@@ -99,10 +99,10 @@ class Role_Command extends FP_CLI_Command {
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) {
-		global $fp_roles;
+		global $wp_roles;
 
 		$output_roles = array();
-		foreach ( $fp_roles->roles as $key => $role ) {
+		foreach ( $wp_roles->roles as $key => $role ) {
 			$output_role = new stdClass();
 
 			$output_role->name = $role['name'];
@@ -128,17 +128,17 @@ class Role_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Check if a role exists.
-	 *     $ fp role exists editor
+	 *     $ wp role exists editor
 	 *     Success: Role with ID 'editor' exists.
 	 */
 	public function exists( $args ) {
-		global $fp_roles;
+		global $wp_roles;
 
-		if ( ! in_array( $args[0], array_keys( $fp_roles->roles ), true ) ) {
-			FP_CLI::error( "Role with ID '{$args[0]}' does not exist." );
+		if ( ! in_array( $args[0], array_keys( $wp_roles->roles ), true ) ) {
+			WP_CLI::error( "Role with ID '{$args[0]}' does not exist." );
 		}
 
-		FP_CLI::success( "Role with ID '{$args[0]}' exists." );
+		WP_CLI::success( "Role with ID '{$args[0]}' exists." );
 	}
 
 	/**
@@ -158,15 +158,15 @@ class Role_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Create role for Approver.
-	 *     $ fp role create approver Approver
+	 *     $ wp role create approver Approver
 	 *     Success: Role with key 'approver' created.
 	 *
 	 *     # Create role for Product Administrator.
-	 *     $ fp role create productadmin "Product Administrator"
+	 *     $ wp role create productadmin "Product Administrator"
 	 *     Success: Role with key 'productadmin' created.
 	 */
 	public function create( $args, $assoc_args ) {
-		global $fp_roles;
+		global $wp_roles;
 
 		self::persistence_check();
 
@@ -174,30 +174,30 @@ class Role_Command extends FP_CLI_Command {
 		$role_name = array_shift( $args );
 
 		if ( empty( $role_key ) || empty( $role_name ) ) {
-			FP_CLI::error( "Can't create role, insufficient information provided." );
+			WP_CLI::error( "Can't create role, insufficient information provided." );
 		}
 
 		$capabilities = false;
 		if ( ! empty( $assoc_args['clone'] ) ) {
-			$role_obj = $fp_roles->get_role( $assoc_args['clone'] );
+			$role_obj = $wp_roles->get_role( $assoc_args['clone'] );
 			if ( ! $role_obj ) {
-				FP_CLI::error( "'{$assoc_args['clone']}' role not found." );
+				WP_CLI::error( "'{$assoc_args['clone']}' role not found." );
 			}
 			$capabilities = array_keys( $role_obj->capabilities );
 		}
 
 		if ( add_role( $role_key, $role_name ) ) {
 			if ( ! empty( $capabilities ) ) {
-				$role_obj = $fp_roles->get_role( $role_key );
+				$role_obj = $wp_roles->get_role( $role_key );
 				foreach ( $capabilities as $cap ) {
 					$role_obj->add_cap( $cap );
 				}
-				FP_CLI::success( "Role with key '{$role_key}' created. Cloned capabilities from '{$assoc_args['clone']}'." );
+				WP_CLI::success( "Role with key '{$role_key}' created. Cloned capabilities from '{$assoc_args['clone']}'." );
 			} else {
-				FP_CLI::success( "Role with key '{$role_key}' created." );
+				WP_CLI::success( "Role with key '{$role_key}' created." );
 			}
 		} else {
-			FP_CLI::error( "Role couldn't be created." );
+			WP_CLI::error( "Role couldn't be created." );
 		}
 	}
 
@@ -212,41 +212,41 @@ class Role_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete approver role.
-	 *     $ fp role delete approver
+	 *     $ wp role delete approver
 	 *     Success: Role with key 'approver' deleted.
 	 *
 	 *     # Delete productadmin role.
-	 *     $ fp role delete productadmin
+	 *     $ wp role delete productadmin
 	 *     Success: Role with key 'productadmin' deleted.
 	 */
 	public function delete( $args ) {
-		global $fp_roles;
+		global $wp_roles;
 
 		self::persistence_check();
 
 		$role_key = array_shift( $args );
 
-		if ( empty( $role_key ) || ! isset( $fp_roles->roles[ $role_key ] ) ) {
-			FP_CLI::error( 'Role key not provided, or is invalid.' );
+		if ( empty( $role_key ) || ! isset( $wp_roles->roles[ $role_key ] ) ) {
+			WP_CLI::error( 'Role key not provided, or is invalid.' );
 		}
 
 		remove_role( $role_key );
 
 		// Note: remove_role() doesn't indicate success or otherwise, so we have to
 		// check ourselves
-		if ( ! isset( $fp_roles->roles[ $role_key ] ) ) {
-			FP_CLI::success( "Role with key '{$role_key}' deleted." );
+		if ( ! isset( $wp_roles->roles[ $role_key ] ) ) {
+			WP_CLI::success( "Role with key '{$role_key}' deleted." );
 		} else {
-			FP_CLI::error( "Role with key '{$role_key}' could not be deleted." );
+			WP_CLI::error( "Role with key '{$role_key}' could not be deleted." );
 		}
 	}
 
 	/**
 	 * Resets any default role to default capabilities.
 	 *
-	 * Uses FinPress' `populate_roles()` function to put one or more
+	 * Uses WordPress' `populate_roles()` function to put one or more
 	 * roles back into the state they were at in the a fresh
-	 * FinPress install. Removes any capabilities that were added,
+	 * WordPress install. Removes any capabilities that were added,
 	 * and restores any capabilities that were removed. Custom roles
 	 * are not affected.
 	 *
@@ -261,19 +261,19 @@ class Role_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Reset three roles.
-	 *     $ fp role reset administrator author contributor
+	 *     $ wp role reset administrator author contributor
 	 *     Restored 1 capability to and removed 0 capabilities from 'administrator' role.
 	 *     No changes necessary for 'author' role.
 	 *     No changes necessary for 'contributor' role.
 	 *     Success: 1 of 3 roles reset.
 	 *
 	 *     # Reset a custom role.
-	 *     $ fp role reset custom_role
+	 *     $ wp role reset custom_role
 	 *     Custom role 'custom_role' not affected.
 	 *     Error: Must specify a default role to reset.
 	 *
 	 *     # Reset all default roles.
-	 *     $ fp role reset --all
+	 *     $ wp role reset --all
 	 *     Success: All default roles reset.
 	 */
 	public function reset( $args, $assoc_args ) {
@@ -281,15 +281,15 @@ class Role_Command extends FP_CLI_Command {
 		self::persistence_check();
 
 		if ( ! Utils\get_flag_value( $assoc_args, 'all' ) && empty( $args ) ) {
-			FP_CLI::error( 'Role key not provided, or is invalid.' );
+			WP_CLI::error( 'Role key not provided, or is invalid.' );
 		}
 
 		if ( ! function_exists( 'populate_roles' ) ) {
-			require_once ABSPATH . 'fp-admin/includes/schema.php';
+			require_once ABSPATH . 'wp-admin/includes/schema.php';
 		}
 
-		global $fp_roles;
-		$all_roles     = array_keys( $fp_roles->roles );
+		global $wp_roles;
+		$all_roles     = array_keys( $wp_roles->roles );
 		$preserve_args = $args;
 
 		// Get our default roles.
@@ -307,7 +307,7 @@ class Role_Command extends FP_CLI_Command {
 			$not_affected_roles = array_diff( $all_roles, $default_roles );
 			if ( ! empty( $not_affected_roles ) ) {
 				foreach ( $not_affected_roles as $not_affected_role ) {
-					FP_CLI::log( "Custom role '{$not_affected_role}' not affected." );
+					WP_CLI::log( "Custom role '{$not_affected_role}' not affected." );
 				}
 			}
 		} else {
@@ -326,13 +326,13 @@ class Role_Command extends FP_CLI_Command {
 			$not_affected_roles = array_diff( $preserve_args, $default_roles );
 			if ( ! empty( $not_affected_roles ) ) {
 				foreach ( $not_affected_roles as $not_affected_role ) {
-					FP_CLI::log( "Custom role '{$not_affected_role}' not affected." );
+					WP_CLI::log( "Custom role '{$not_affected_role}' not affected." );
 				}
 			}
 
 			// No roles were unset, bail.
 			if ( count( $default_roles ) === count( $preserve ) ) {
-				FP_CLI::error( 'Must specify a default role to reset.' );
+				WP_CLI::error( 'Must specify a default role to reset.' );
 			}
 
 			// For the roles we're not resetting.
@@ -347,17 +347,13 @@ class Role_Command extends FP_CLI_Command {
 				remove_role( $role );
 			}
 
-			/**
-			 * @var array<string|\FP_Role> $preserve
-			 */
-
 			// Put back all default roles and capabilities.
 			populate_roles();
 
 			// Restore the preserved roles.
 			foreach ( $preserve as $k => $roleobj ) {
 				// Re-remove after populating.
-				if ( $roleobj instanceof \FP_Role ) {
+				if ( is_a( $roleobj, 'WP_Role' ) ) {
 					remove_role( $roleobj->name );
 					add_role( $roleobj->name, ucwords( $roleobj->name ), $roleobj->capabilities );
 				} else {
@@ -377,44 +373,42 @@ class Role_Command extends FP_CLI_Command {
 			if ( $after[ $role_key ] != $before[ $role_key ] ) {
 				++$num_reset;
 				$before_capabilities = isset( $before[ $role_key ] ) ? $before[ $role_key ]->capabilities : [];
-				// @phpstan-ignore property.nonObject
-				$restored_cap = array_diff_key( $after[ $role_key ]->capabilities, $before_capabilities );
-				// @phpstan-ignore property.nonObject
-				$removed_cap        = array_diff_key( $before_capabilities, $after[ $role_key ]->capabilities );
-				$restored_cap_count = count( $restored_cap );
-				$removed_cap_count  = count( $removed_cap );
-				$restored_text      = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
-				$removed_text       = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
-				$message            = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
-				FP_CLI::log( sprintf( $message, $restored_cap_count, $removed_cap_count, $role_key ) );
+				$restored_cap        = array_diff_key( $after[ $role_key ]->capabilities, $before_capabilities );
+				$removed_cap         = array_diff_key( $before_capabilities, $after[ $role_key ]->capabilities );
+				$restored_cap_count  = count( $restored_cap );
+				$removed_cap_count   = count( $removed_cap );
+				$restored_text       = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
+				$removed_text        = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
+				$message             = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
+				WP_CLI::log( sprintf( $message, $restored_cap_count, $removed_cap_count, $role_key ) );
 			} else {
-				FP_CLI::log( "No changes necessary for '{$role_key}' role." );
+				WP_CLI::log( "No changes necessary for '{$role_key}' role." );
 			}
 		}
 		if ( $num_reset ) {
 			if ( 1 === count( $args ) ) {
-				FP_CLI::success( 'Role reset.' );
+				WP_CLI::success( 'Role reset.' );
 			} else {
-				FP_CLI::success( "{$num_reset} of {$num_to_reset} roles reset." );
+				WP_CLI::success( "{$num_reset} of {$num_to_reset} roles reset." );
 			}
 		} elseif ( 1 === count( $args ) ) {
-				FP_CLI::success( 'Role didn\'t need resetting.' );
+				WP_CLI::success( 'Role didn\'t need resetting.' );
 		} else {
-			FP_CLI::success( 'No roles needed resetting.' );
+			WP_CLI::success( 'No roles needed resetting.' );
 		}
 	}
 
 	/**
 	 * Assert that the roles are persisted to the database.
 	 *
-	 * @throws \FP_CLI\ExitException If the roles are not persisted to the
+	 * @throws \WP_CLI\ExitException If the roles are not persisted to the
 	 *                               database.
 	 */
 	private static function persistence_check() {
-		global $fp_roles;
+		global $wp_roles;
 
-		if ( ! $fp_roles->use_db ) {
-			FP_CLI::error( 'Role definitions are not persistent.' );
+		if ( ! $wp_roles->use_db ) {
+			WP_CLI::error( 'Role definitions are not persistent.' );
 		}
 	}
 }

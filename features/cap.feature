@@ -1,10 +1,10 @@
 Feature: Manage Cap
 
   Background:
-    Given a FP install
+    Given a WP install
 
   Scenario: CRUD for cap
-    When I run `fp cap list contributor | sort`
+    When I run `wp cap list contributor | sort`
     Then STDOUT should be:
       """
       delete_posts
@@ -14,37 +14,37 @@ Feature: Manage Cap
       read
       """
 
-    When I run `fp cap add contributor spectate`
+    When I run `wp cap add contributor spectate`
     Then STDOUT should contain:
       """
       Success: Added 1 capability to 'contributor' role.
       """
 
-    When I run `fp cap add contributor behold observe --grant`
+    When I run `wp cap add contributor behold observe --grant`
     Then STDOUT should contain:
       """
       Success: Added 2 capabilities to 'contributor' role.
       """
 
-    When I run `fp cap add contributor detect --no-grant`
+    When I run `wp cap add contributor detect --no-grant`
     Then STDOUT should contain:
       """
       Success: Added 1 capability to 'contributor' role as false.
       """
 
-    When I run `fp cap add contributor discover examine --no-grant`
+    When I run `wp cap add contributor discover examine --no-grant`
     Then STDOUT should contain:
       """
       Success: Added 2 capabilities to 'contributor' role as false.
       """
 
-    When I run `fp cap add contributor inspire --grant=false`
+    When I run `wp cap add contributor inspire --grant=false`
     Then STDOUT should contain:
       """
       Success: Added 1 capability to 'contributor' role as false.
       """
 
-    When I run `fp cap list contributor`
+    When I run `wp cap list contributor`
     Then STDOUT should contain:
       """
       spectate
@@ -70,7 +70,7 @@ Feature: Manage Cap
       examine
       """
 
-    When I run `fp cap list contributor --show-grant`
+    When I run `wp cap list contributor --show-grant`
     Then STDOUT should contain:
       """
       spectate,true
@@ -96,25 +96,25 @@ Feature: Manage Cap
       examine,false
       """
 
-    When I run `fp cap remove contributor spectate`
+    When I run `wp cap remove contributor spectate`
     Then STDOUT should contain:
       """
       Success: Removed 1 capability from 'contributor' role.
       """
 
-    When I run `fp cap remove contributor behold observe`
+    When I run `wp cap remove contributor behold observe`
     Then STDOUT should contain:
       """
       Success: Removed 2 capabilities from 'contributor' role.
       """
 
-    When I run `fp cap remove contributor detect discover examine`
+    When I run `wp cap remove contributor detect discover examine`
     Then STDOUT should contain:
       """
       Success: Removed 3 capabilities from 'contributor' role.
       """
 
-    When I run `fp cap list contributor`
+    When I run `wp cap list contributor`
     Then STDOUT should not contain:
       """
       spectate
@@ -128,7 +128,7 @@ Feature: Manage Cap
       observe
       """
 
-    When I run `fp cap list contributor --show-grant`
+    When I run `wp cap list contributor --show-grant`
     Then STDOUT should not contain:
       """
       spectate,true
@@ -154,7 +154,7 @@ Feature: Manage Cap
       examine,false
       """
 
-    When I try `fp cap add role-not-available spectate`
+    When I try `wp cap add role-not-available spectate`
     Then STDERR should be:
       """
       Error: 'role-not-available' role not found.
