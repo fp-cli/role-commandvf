@@ -1,14 +1,14 @@
 {
-    "name": "fp-cli/role-command",
+    "name": "fp-cli/role-commandvf",
     "type": "fp-cli-package",
     "description": "Adds, removes, lists, and resets roles and capabilities.",
-    "homepage": "https://github.com/fp-cli/role-command",
+    "homepage": "https://github.com/fp-cli/role-commandvf",
     "license": "MIT",
     "authors": [
         {
-            "name": "",
-            "email": "",
-            "homepage": ""
+            "name": "devyn",
+            "email": "devyntwilliam@gmail.com",
+            "homepage": "https://fintasticfish.us"
         }
     ],
     "require": {
@@ -50,7 +50,7 @@
             "src/"
         ],
         "files": [
-            "role-command.php"
+            "role-commandvf.php"
         ]
     },
     "minimum-stability": "dev",
@@ -73,6 +73,6 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/fp-cli/role-command/issues"
+        "issues": "https://github.com/fp-cli/role-commandvf/issues"
     }
 }

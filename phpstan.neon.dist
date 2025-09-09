@@ -2,7 +2,7 @@ parameters:
   level: 9
   paths:
     - src
-    - role-command.php
+    - role-commandvf.php
   scanDirectories:
     - vendor/fp-cli/fp-cli/php
   scanFiles:

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="FP-CLI-role">
-	<description>Custom ruleset for FP-CLI role-command</description>
+	<description>Custom ruleset for FP-CLI role-commandvf</description>
 
 	<!--
 	#############################################################################
